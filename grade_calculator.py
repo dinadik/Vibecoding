@@ -1,4 +1,42 @@
+import time
+import os
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def splash_screen():
+    ascii_text = r"""
+  ____               _          ____      _            _       _              
+ / ___|_ __ __ _  __| | ___    / ___|__ _| | ___ _   _| | __ _| |_ ___  _ __ 
+| |  _| '__/ _` |/ _` |/ _ \  | |   / _` | |/ __| | | | |/ _` | __/ _ \| '__|
+| |_| | | | (_| | (_| |  __/  | |__| (_| | | (__| |_| | | (_| | || (_) | |   
+ \____|_|  \__,_|\__,_|\___|   \____\__,_|_|\___|\__,_|_|\__,_|\__\___/|_|   
+                                                                              
+ _            ____                             ___   ___ 
+| |__  _   _ / ___|_ __ ___  _   _ _ __       / _ \ / _ \
+| '_ \| | | | |  _| '__/ _ \| | | | '_ \     | | | | (_) |
+| |_) | |_| | |_| | | | (_) | |_| | |_) |    | |_| |\__, |
+|_.__/ \__, |\____|_|  \___/ \__,_| .__/      \___/   /_/ 
+       |___/                      |_|                     
+"""
+    start_time = time.time()
+    while time.time() - start_time < 5:
+        # Growing animation
+        for i in range(1, 5):
+            if time.time() - start_time >= 5: break
+            clear_screen()
+            print("\n" * i + ascii_text)
+            time.sleep(0.15)
+        # Shrinking animation
+        for i in range(4, 0, -1):
+            if time.time() - start_time >= 5: break
+            clear_screen()
+            print("\n" * i + ascii_text)
+            time.sleep(0.15)
+    clear_screen()
+
 def calculate_grade():
+    splash_screen()
     while True:
         # Ask for student name
         name = input("Enter student's name: ")
@@ -34,10 +72,12 @@ def calculate_grade():
                     else:
                         grade = "Fail"
 
-                    # Display result
-                    print(f"\nStudent: {name}")
-                    print(f"Average: {average:.2f}")
-                    print(f"Grade: {grade}")
+                    # Display result in specified format
+                    print("\n" + "-" * 30)
+                    print(f"Name   : {name}")
+                    print(f"Average: {average:.1f}")
+                    print(f"Grade  : {grade}")
+                    print("-" * 30)
                     
             except ValueError:
                 print("Error: Please enter a valid numerical value for marks.")
@@ -45,6 +85,7 @@ def calculate_grade():
         # Ask to continue or exit
         choice = input("\nType 'Exit' to stop or any other key to continue: ")
         if choice.strip().lower() == "exit":
+            print("Exiting program. Goodbye!")
             break
 
 if __name__ == "__main__":
