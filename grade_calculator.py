@@ -21,15 +21,20 @@ def calculate_grade():
         # Calculate the average
         average = sum(marks) / len(marks)
         
-        # Display result
-        if average >= 40:
-            print(f"\nStudent: {name}")
-            print(f"Average: {average:.2f}")
-            print("Status: Pass")
+        # Determine grade
+        if average > 75:
+            grade = "A"
+        elif average >= 60:
+            grade = "B"
+        elif average >= 40:
+            grade = "C"
         else:
-            print(f"\nStudent: {name}")
-            print(f"Average: {average:.2f}")
-            print("Status: Fail")
+            grade = "Failed"
+
+        # Display result
+        print(f"\nStudent: {name}")
+        print(f"Average: {average:.2f}")
+        print(f"Grade: {grade}")
             
     except ValueError:
         print("Error: Please enter a valid numerical value for marks.")
