@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Profile Card</title>
+
+  <!-- Google Fonts: Inter (professional system-style) + Poppins for headings -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES — Dark Mode Palette
+       ============================================================ */
+    :root {
+      /* Background */
+      --bg-base:             #080c14;
+      --bg-overlay:          rgba(8, 12, 20, 0.62);
+
+      /* Glassmorphism Effect */
+      --glass-bg:            rgba(14, 18, 35, 0.52);
+      --glass-bg-inner:      rgba(255, 255, 255, 0.03);
+      --glass-border:        rgba(255, 255, 255, 0.10);
+      --glass-border-top:    rgba(255, 255, 255, 0.18);
+      --glass-shadow:        rgba(0, 0, 0, 0.50);
+      --glass-hover-shadow:  rgba(0, 0, 0, 0.65);
+      --glass-glow:          rgba(99, 102, 241, 0.18);
+      --glass-glow-hover:    rgba(99, 102, 241, 0.30);
+
+      /* Accent Colors */
+      --accent:              #818cf8;   /* indigo-400 */
+      --accent-bright:       #6366f1;   /* indigo-500 */
+      --accent-cyan:         #22d3ee;   /* cyan-400   */
+      --accent-soft:         rgba(99, 102, 241, 0.14);
+
+      /* Typography */
+      --text-primary:        #f1f5f9;   /* slate-100  */
+      --text-secondary:      #94a3b8;   /* slate-400  */
+      --text-muted:          #475569;   /* slate-600  */
+
+      /* Skill Tags */
+      --tag-bg:              rgba(99, 102, 241, 0.12);
+      --tag-border:          rgba(99, 102, 241, 0.28);
+      --tag-text:            #a5b4fc;   /* indigo-300 */
+      --tag-hover-bg:        rgba(99, 102, 241, 0.24);
+      --tag-hover-border:    rgba(99, 102, 241, 0.55);
+
+      /* Blur Values */
+      --blur-amount:         18px;
+      --blur-amount-strong:  24px;
+
+      /* Radii */
+      --radius-card:         22px;
+      --radius-tag:          999px;
+      --radius-avatar:       50%;
+
+      /* Avatar gradient */
+      --avatar-gradient:     linear-gradient(135deg, #312e81 0%, #1e3a8a 60%, #164e63 100%);
+    }
+
+    /* ============================================================
+       LAYOUT STRUCTURE — Reset & Page Centering
+       ============================================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      /* Smooth scrolling & prevent layout shift */
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text-primary);
+
+      /* ── Dark background: CSS fallback → Unsplash image (Unsplash License, free) ──
+         Photo: "Silhouette of mountains under the stars" by Greg Rakozy
+         Source: https://unsplash.com/photos/oMpAz-DN-9I
+         License: Unsplash Free — https://unsplash.com/license                     */
+      background-color: var(--bg-base);
+      background-image:
+        linear-gradient(to bottom, var(--bg-overlay) 0%, var(--bg-overlay) 100%),
+        url('https://images.unsplash.com/photo-1475274047050-1d0c0975de51?auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+    }
+
+    /* ============================================================
+       LAYOUT STRUCTURE — Decorative Glow Blobs
+       ============================================================ */
+    .blob-wrap {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      mix-blend-mode: screen;
+    }
+
+    .blob-1 {
+      width: 480px; height: 480px;
+      top: -120px; left: -140px;
+      background: rgba(49, 46, 129, 0.55);   /* deep indigo */
+    }
+
+    .blob-2 {
+      width: 400px; height: 400px;
+      bottom: -100px; right: -100px;
+      background: rgba(14, 116, 144, 0.45);  /* deep cyan   */
+    }
+
+    .blob-3 {
+      width: 320px; height: 320px;
+      top: 38%; left: 52%;
+      background: rgba(15, 23, 60, 0.60);    /* dark indigo  */
+    }
+
+    /* ============================================================
+       CARD STYLES — Outer Container
+       ============================================================ */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      border-radius: var(--radius-card);
+      padding: 0;               /* padding moved to inner sections */
+      text-align: center;
+      overflow: hidden;
+
+      /* ============================================================
+         GLASSMORPHISM EFFECT — Dark
+         ============================================================ */
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-amount)) saturate(180%) brightness(1.05);
+      -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(180%) brightness(1.05);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 0 0 1px var(--glass-border-top) inset,   /* top shimmer */
+        0 12px 40px var(--glass-shadow),
+        0 0 60px var(--glass-glow);
+
+      /* Smooth transitions for hover */
+      transition:
+        transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1),
+        box-shadow 0.38s ease;
+    }
+
+    /* Thin accent line across the very top of the card */
+    .card::before {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--accent-bright) 30%,
+        var(--accent-cyan)   70%,
+        transparent 100%
+      );
+      opacity: 0.75;
+    }
+
+    /* ============================================================
+       HOVER ANIMATIONS — Card Lift + Glow
+       ============================================================ */
+    .card:hover {
+      transform: translateY(-12px) scale(1.012);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.14) inset,
+        0 28px 64px var(--glass-hover-shadow),
+        0 0 80px var(--glass-glow-hover),
+        0 0 0 1px rgba(99,102,241,0.20);
+    }
+
+    /* Inner card padding wrapper */
+    .card-body {
+      padding: 2.4rem 2.2rem 2rem;
+    }
+
+    /* ============================================================
+       TYPOGRAPHY — Avatar
+       ============================================================ */
+
+    /* --- Avatar --- */
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.4rem;
+    }
+
+    .avatar {
+      width: 104px;
+      height: 104px;
+      border-radius: var(--radius-avatar);
+      object-fit: cover;
+      background: var(--avatar-gradient);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 0 0 4px rgba(99, 102, 241, 0.18),
+        0 6px 24px rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: box-shadow 0.32s ease, transform 0.32s ease;
+    }
+
+    /* Placeholder initials */
+    .avatar-initials {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.80);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* Online status dot */
+    .avatar-dot {
+      position: absolute;
+      bottom: 5px; right: 5px;
+      width: 14px; height: 14px;
+      background: #34d399;             /* emerald-400 */
+      border-radius: 50%;
+      border: 2.5px solid #0e1223;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.65);
+    }
+
+    .card:hover .avatar {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 0 5px rgba(99, 102, 241, 0.30),
+        0 10px 32px rgba(0, 0, 0, 0.65);
+    }
+
+    /* ============================================================
+       TYPOGRAPHY — Name, Stream, Bio
+       ============================================================ */
+
+    /* --- Name --- */
+    .student-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.45rem;
+    }
+
+    /* --- Stream / Course badge --- */
+    .student-stream {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      background: var(--accent-soft);
+      border: 1px solid rgba(99, 102, 241, 0.22);
+      padding: 0.3rem 1rem;
+      border-radius: var(--radius-tag);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Small dot icon prefix for the stream badge */
+    .student-stream::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+
+    /* --- Divider --- */
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-bright), var(--accent-cyan));
+      border-radius: 99px;
+      margin: 0 auto 1.2rem;
+      opacity: 0.60;
+    }
+
+    /* --- Bio --- */
+    .student-bio {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 1.75rem;
+      padding: 0 0.1rem;
+      letter-spacing: 0.005em;
+    }
+
+    /* ============================================================
+       SKILL TAGS — Pill / Badge Styling
+       ============================================================ */
+    .skills-section {
+      margin-bottom: 1.75rem;
+    }
+
+    .skills-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.7rem;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .skill-tag {
+      font-size: 0.775rem;
+      font-weight: 500;
+      color: var(--tag-text);
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
+      border-radius: var(--radius-tag);
+      padding: 0.32rem 0.9rem;
+      cursor: default;
+      letter-spacing: 0.01em;
+      transition:
+        background  0.22s ease,
+        border-color 0.22s ease,
+        color        0.22s ease,
+        transform   0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow  0.22s ease;
+    }
+
+    /* ============================================================
+       HOVER ANIMATIONS — Skill Tag Pop
+       ============================================================ */
+    .skill-tag:hover {
+      background: var(--tag-hover-bg);
+      border-color: var(--tag-hover-border);
+      color: #c7d2fe;             /* indigo-200 */
+      transform: translateY(-3px) scale(1.07);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+    }
+
+    /* ============================================================
+       SOCIAL ICONS — Inline SVG Links
+       ============================================================ */
+
+    /* Thin separator above social row */
+    .social-separator {
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.08) 30%,
+        rgba(255,255,255,0.08) 70%,
+        transparent
+      );
+      margin-bottom: 1.4rem;
+    }
+
+    .social-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition:
+        transform    0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background   0.25s ease,
+        border-color 0.25s ease,
+        box-shadow   0.25s ease,
+        color        0.25s ease;
+    }
+
+    .social-link svg {
+      width: 19px;
+      height: 19px;
+      fill: currentColor;
+    }
+
+    /* ============================================================
+       HOVER ANIMATIONS — Social Icons Scale + Color Shift
+       ============================================================ */
+    .social-link:hover {
+      transform: translateY(-5px) scale(1.18);
+    }
+
+    .social-link.github:hover {
+      background: #24292e;
+      border-color: rgba(255,255,255,0.20);
+      color: #e6edf3;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.55), 0 0 16px rgba(230,237,243,0.10);
+    }
+
+    .social-link.linkedin:hover {
+      background: #0a66c2;
+      border-color: rgba(10,102,194,0.60);
+      color: #ffffff;
+      box-shadow: 0 10px 28px rgba(10,102,194,0.40), 0 0 16px rgba(10,102,194,0.20);
+    }
+
+    .social-link.email:hover {
+      background: #c5221f;
+      border-color: rgba(234,67,53,0.55);
+      color: #ffffff;
+      box-shadow: 0 10px 28px rgba(234,67,53,0.35), 0 0 16px rgba(234,67,53,0.18);
+    }
+
+    /* ============================================================
+       CARD FOOTER
+       ============================================================ */
+    .card-footer {
+      background: rgba(0, 0, 0, 0.22);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.85rem 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #34d399;             /* emerald — "available" indicator */
+      letter-spacing: 0.04em;
+    }
+
+    .footer-right::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 6px rgba(52,211,153,0.70);
+    }
+
+    /* ============================================================
+       RESPONSIVE TWEAKS
+       ============================================================ */
+    @media (max-width: 480px) {
+      body { padding: 1rem; }
+      .card-body { padding: 2rem 1.6rem 1.75rem; }
+      .student-name { font-size: 1.4rem; }
+      .card-footer { padding: 0.8rem 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Decorative glow blobs -->
+  <div class="blob-wrap" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- ============================================================
+       LAYOUT STRUCTURE — Profile Card
+       ============================================================ -->
+  <article class="card" role="region" aria-label="Student Profile Card">
+
+    <!-- Inner padding wrapper (keeps ::before accent line flush) -->
+    <div class="card-body">
+
+      <!-- Avatar -->
+      <div class="avatar-wrap">
+        <!--
+          To swap in a real photo:
+            Replace the <div class="avatar"> with:
+            <img class="avatar" src="your-photo.jpg" alt="Alex Rivera" />
+            (the .avatar-initials span can then be removed)
+        -->
+        <div class="avatar">
+          <span class="avatar-initials" aria-hidden="true">AR</span>
+        </div>
+        <div class="avatar-dot" title="Available for collaborations"></div>
+      </div>
+
+      <!-- ============================================================
+           TYPOGRAPHY — Name & Stream
+           ============================================================ -->
+      <h1 class="student-name">Alex Rivera</h1>
+      <p class="student-stream">Computer Science &nbsp;·&nbsp; Year 2</p>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <!-- Bio -->
+      <p class="student-bio">
+        Passionate about building intuitive interfaces and uncovering
+        stories hidden in data. Currently exploring machine learning
+        fundamentals and contributing to open-source projects in my
+        spare time.
+      </p>
+
+      <!-- ============================================================
+           SKILL TAGS
+           ============================================================ -->
+      <section class="skills-section" aria-label="Skills">
+        <p class="skills-label">Skills</p>
+        <ul class="skills-list">
+          <li class="skill-tag">Python</li>
+          <li class="skill-tag">UI Design</li>
+          <li class="skill-tag">Data Analysis</li>
+          <li class="skill-tag">React</li>
+          <li class="skill-tag">SQL</li>
+          <li class="skill-tag">Figma</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           SOCIAL ICONS — Inline SVG (GitHub, LinkedIn, Email)
+           ============================================================ -->
+      <div class="social-separator" aria-hidden="true"></div>
+
+      <nav class="social-section" aria-label="Social Links">
+
+        <!-- GitHub -->
+        <a
+          href="https://github.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="social-link github"
+          aria-label="GitHub Profile"
+          title="GitHub"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303
+              3.438 9.8 8.205 11.385.6.113.82-.258.82-.577
+              0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61
+              C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729
+              1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305
+              3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93
+              0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176
+              0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405
+              1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23
+              .645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22
+              0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22
+              0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57
+              C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+
+        <!-- LinkedIn -->
+        <a
+          href="https://linkedin.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="social-link linkedin"
+          aria-label="LinkedIn Profile"
+          title="LinkedIn"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+              -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+              c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+              M5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065z
+              m1.782 13.019H3.555V9h3.564v11.452z
+              M22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24
+              1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774
+              23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+
+        <!-- Email -->
+        <a
+          href="mailto:alex.rivera@university.edu"
+          class="social-link email"
+          aria-label="Send Email"
+          title="Email"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16
+              c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5
+              8-5v2z"/>
+          </svg>
+        </a>
+
+      </nav>
+    </div><!-- /.card-body -->
+
+    <!-- Card Footer -->
+    <footer class="card-footer">
+      <span class="footer-left">UCSC &nbsp;·&nbsp; Class of 2026</span>
+      <span class="footer-right">Available</span>
+    </footer>
+
+  </article>
+
+</body>
+</html>
