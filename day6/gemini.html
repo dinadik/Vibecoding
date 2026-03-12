@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrench & Bolt Animation</title>
+    <style>
+        :root {
+            --metal-shiny: #bdc3c7;
+            --metal-dark: #7f8c8d;
+            --bolt-color: #95a5a6;
+            --shadow: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2c3e50;
+            font-family: sans-serif;
+        }
+
+        .container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        /* The Bolt and Threads */
+        .bolt-assembly {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bolt-shaft {
+            width: 40px;
+            height: 150px;
+            background: linear-gradient(to right, #7f8c8d, #bdc3c7, #7f8c8d);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Threading texture */
+        .bolt-shaft::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 5px,
+                rgba(0,0,0,0.2) 6px,
+                rgba(0,0,0,0.2) 7px
+            );
+        }
+
+        /* The Hex Nut */
+        .nut {
+            width: 80px;
+            height: 50px;
+            background: linear-gradient(135deg, #bdc3c7, #2c3e50);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            position: absolute;
+            top: 80px;
+            left: -20px;
+            z-index: 2;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: top 0.5s ease-out; /* Moves down as it tightens */
+        }
+
+        /* The Wrench */
+        .wrench {
+            position: absolute;
+            width: 250px;
+            height: 60px;
+            top: 75px;
+            left: 20px;
+            transform-origin: 20px 30px; /* Pivot point at the nut */
+            z-index: 3;
+            animation: tighten 3s infinite ease-in-out;
+        }
+
+        .wrench-head {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, transparent 35%, var(--metal-shiny) 36%);
+            border: 8px solid var(--metal-dark);
+            border-radius: 50%;
+            position: relative;
+            top: -15px;
+            left: -20px;
+        }
+
+        /* The "C" opening of the wrench */
+        .wrench-head::before {
+            content: "";
+            position: absolute;
+            width: 50px;
+            height: 40px;
+            background: #2c3e50; /* Match background to look like a cutout */
+            top: 20px;
+            left: 35px;
+            transform: rotate(-15deg);
+        }
+
+        .wrench-handle {
+            width: 180px;
+            height: 35px;
+            background: linear-gradient(to bottom, var(--metal-shiny), var(--metal-dark));
+            border-radius: 0 20px 20px 0;
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        /* Animation Keyframes */
+        @keyframes tighten {
+            0% { transform: rotate(0deg); }
+            30% { transform: rotate(45deg); } /* Tightening stroke */
+            50% { transform: rotate(45deg); } /* Pause */
+            80% { transform: rotate(0deg); }  /* Reset position */
+            100% { transform: rotate(0deg); }
+        }
+
+        .label {
+            position: absolute;
+            bottom: 20px;
+            color: white;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="bolt-assembly">
+            <div class="bolt-shaft"></div>
+            <div class="nut" id="hexNut"></div>
+            <div class="wrench">
+                <div class="wrench-head"></div>
+                <div class="wrench-handle"></div>
+            </div>
+        </div>
+        <div class="label">Mechanical Torque Simulation</div>
+    </div>
+
+    <script>
+        // Optional JS to make the nut slowly move down the bolt as it "tightens"
+        const nut = document.getElementById('hexNut');
+        let position = 80;
+        
+        setInterval(() => {
+            position += 0.5;
+            if (position > 120) position = 80; // Reset loop
+            nut.style.top = position + 'px';
+        }, 3000); // Matches the CSS animation duration
+    </script>
+</body>
+</html>

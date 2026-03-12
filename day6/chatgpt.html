@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wrench Tightening Nut</title>
+<style>
+  body {
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  svg {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* Bolt and Nut */
+  .bolt, .nut {
+    fill: #888;
+    stroke: #555;
+    stroke-width: 2;
+  }
+
+  /* Wrench */
+  .wrench {
+    fill: #ccc;
+    stroke: #666;
+    stroke-width: 2;
+    transform-origin: center;
+  }
+
+  /* Animation */
+  @keyframes rotateNut {
+    0% { transform: translateX(0) rotate(0deg); }
+    100% { transform: translateX(30px) rotate(90deg); }
+  }
+
+  .animate-nut {
+    animation: rotateNut 2s linear infinite;
+  }
+
+  @keyframes swingWrench {
+    0% { transform: rotate(-20deg); }
+    50% { transform: rotate(20deg); }
+    100% { transform: rotate(-20deg); }
+  }
+
+  .animate-wrench {
+    animation: swingWrench 2s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 200 200">
+  <!-- Bolt -->
+  <rect x="90" y="60" width="20" height="80" rx="3" ry="3" class="bolt" />
+
+  <!-- Nut -->
+  <polygon points="100,55 115,65 115,85 100,95 85,85 85,65" class="nut animate-nut" />
+
+  <!-- Wrench -->
+  <g class="wrench animate-wrench">
+    <rect x="50" y="50" width="60" height="10" rx="2" ry="2" />
+    <polygon points="110,45 130,55 130,65 110,75" />
+  </g>
+</svg>
+
+</body>
+</html>
