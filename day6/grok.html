@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Wrench Tightening Nut</title>
+<style>
+  body {
+    height: 100vh;
+    margin: 0;
+    background: #111;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .scene {
+    position: relative;
+    width: 420px;
+    height: 280px;
+    perspective: 900px;
+  }
+
+  .bolt {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 38px;
+    height: 160px;
+    background: linear-gradient(90deg, #444 0%, #555 40%, #666 60%, #555 100%);
+    border-radius: 6px;
+    box-shadow: 
+      inset 0 0 12px #000,
+      0 0 20px rgba(0,0,0,0.7);
+  }
+
+  .bolt::before {
+    content: "";
+    position: absolute;
+    inset: 0 4px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #222 0px, #222 3px,
+      #333 3px, #333 6px
+    );
+    border-radius: 4px;
+  }
+
+  .nut {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 54px;
+    height: 54px;
+    margin: -27px 0 0 -27px;
+    background: #8b6f47;
+    clip-path: polygon(
+      50% 0%, 100% 25%, 100% 75%,
+      50% 100%, 0% 75%, 0% 25%
+    );
+    box-shadow: 
+      inset -8px -8px 12px rgba(0,0,0,0.6),
+      inset 6px 6px 10px rgba(255,255,255,0.15),
+      0 0 20px rgba(0,0,0,0.8);
+    transform-origin: 50% 140%;
+    animation: tighten 4.2s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  }
+
+  .nut::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    background: #a68a5e;
+    clip-path: polygon(
+      50% 0%, 100% 25%, 100% 75%,
+      50% 100%, 0% 75%, 0% 25%
+    );
+  }
+
+  .wrench {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 140px;
+    height: 36px;
+    margin-left: -90px;
+    margin-top: -18px;
+    background: linear-gradient(#777, #999, #aaa, #ccc, #ddd, #eee);
+    border-radius: 6px 18px 18px 6px;
+    box-shadow: 
+      inset -10px 0 15px rgba(0,0,0,0.5),
+      6px 0 20px rgba(0,0,0,0.6),
+      0 0 30px rgba(0,0,0,0.4);
+    transform-origin: 90px 50%;
+    animation: turn 4.2s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  }
+
+  .wrench::before {
+    content: "";
+    position: absolute;
+    right: -24px;
+    top: 4px;
+    width: 28px;
+    height: 28px;
+    background: #444;
+    border-radius: 4px;
+    box-shadow: inset 0 0 8px #000;
+  }
+
+  .wrench::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    top: 10px;
+    width: 16px;
+    height: 16px;
+    background: #222;
+    border-radius: 3px;
+  }
+
+  @keyframes tighten {
+    0%   { transform: translate(-50%, -50%) rotate(0deg) translateY(-60px); }
+    85%  { transform: translate(-50%, -50%) rotate(0deg) translateY(-60px); }
+    100% { transform: translate(-50%, -50%) rotate(720deg) translateY(-140px); }
+  }
+
+  @keyframes turn {
+    0%   { transform: rotate(-40deg); }
+    10%  { transform: rotate(-40deg); }
+    25%  { transform: rotate(40deg); }
+    35%  { transform: rotate(40deg); }
+    50%  { transform: rotate(-40deg); }
+    60%  { transform: rotate(-40deg); }
+    75%  { transform: rotate(40deg); }
+    85%  { transform: rotate(40deg); }
+    100% { transform: rotate(-40deg); }
+  }
+
+  .spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fffa90;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #fffa90, 0 0 24px #ffdd44;
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="bolt"></div>
+  <div class="nut"></div>
+  <div class="wrench"></div>
+</div>
+
+<script>
+// Optional tiny sparks (visual feedback)
+const nut = document.querySelector('.nut');
+const scene = document.querySelector('.scene');
+
+function spark() {
+  const s = document.createElement('div');
+  s.className = 'spark';
+  s.style.left = (Math.random()*80 + 160) + 'px';
+  s.style.top  = (Math.random()*80 + 80)  + 'px';
+  scene.appendChild(s);
+  
+  s.animate([
+    { transform: 'scale(0.2)', opacity: 0.9 },
+    { transform: 'scale(2.2) translateY(-30px)', opacity: 0 }
+  ], {
+    duration: 400 + Math.random()*400,
+    easing: 'ease-out'
+  }).onfinish = () => s.remove();
+}
+
+setInterval(() => {
+  if (Math.random() > 0.6) spark();
+}, 180);
+</script>
+
+</body>
+</html>
